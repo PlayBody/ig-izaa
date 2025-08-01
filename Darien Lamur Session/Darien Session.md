@@ -2,7 +2,7 @@
 
 <h1 style="font-size: 36px;">Darien Session</h1>
 
-<h3>Senior Software Engineer</h3>
+<h3>Senior Software Engineer | Java, Go, Rust, Nodejs, AWS</h3>
 
 ```
 darien.session.work@gmail.com

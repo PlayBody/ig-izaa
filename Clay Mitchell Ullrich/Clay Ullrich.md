@@ -2,7 +2,7 @@
 
 <h1 style="font-size: 36px;">Clay Ullrich</h1>
 
-<h3>Senior Software Engineer</h3>
+<h3>Senior Software Engineer | Java, Python, AI/ML, C++, AWS</h3>
 
 ```
 clay.ullrich.work@gmail.com

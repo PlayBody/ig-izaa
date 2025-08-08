@@ -1,27 +1,31 @@
 <div align="center">
 <h1>Darien Session</h1>
-<h3>darien.session.work@gmail.com</h3>
+<h3>dsession.work@gmail.com</h3>
 <h4>+1 210 485 5772</h4>
 </div>
 
 ***To the Hiring Team,***
 
-Building things that last, scale, and empower others—that’s been my north star throughout my career as a software engineer. From my earliest days refactoring legacy systems to my recent work at Apple architecting microservices and integrating blockchain, I’ve always been driven by curiosity and a desire to solve real-world problems with elegant code.
+Building high-performance, scalable systems that drive business value—that's been my north star throughout my career as a backend engineer. From modernizing legacy systems to architecting mission-critical microservices handling billions in transactions, I've consistently delivered solutions that combine technical excellence with measurable business impact.
 
-I thrive in environments where complexity is the norm and the stakes are high. At Apple, I led the charge in adopting Rust and Go for high-performance backend services, and dove deep into distributed systems, event-driven architectures, and cloud automation. My favorite projects are those that blend technical rigor with creative problem-solving—like designing a GraphQL gateway to unify data access, or leveraging blockchain to bring transparency and trust to critical workflows.
+I thrive in environments where performance and reliability are paramount. At Apple, I spearheaded the adoption of Rust and Go for compute-intensive operations, achieving a 45% performance improvement and 60% reduction in memory usage. I've architected systems processing 3B+ daily events and built platforms handling 1M+ concurrent connections while maintaining sub-100ms latency. My recent work includes designing a cloud-native telecom platform processing $100M+ monthly revenue and implementing a unified GraphQL gateway that reduced client-side API calls by 40%.
 
-But technology is only half the story. I believe the best engineering happens when teams are empowered, ideas flow freely, and learning is constant. I’ve mentored junior engineers, championed shift-left testing, and helped foster cultures where experimentation and reliability go hand in hand.
+What sets me apart is my end-to-end approach to system design. I've led complex initiatives from conception to production, including:
+- Transforming monolithic applications into scalable microservices architectures
+- Implementing sophisticated caching strategies that reduced response times from 250ms to 80ms
+- Designing event-driven systems with exactly-once processing guarantees
+- Building comprehensive observability solutions that reduced MTTR from 40 minutes to 12 minutes
 
-Here’s what I bring to the table:
-- A decade of hands-on experience across Java, Go, Rust, Python, and TypeScript
-- Deep expertise in cloud platforms (AWS, GCP, Azure), containers, and infrastructure-as-code
-- A passion for building resilient, observable, and secure systems
-- A collaborative spirit and a knack for translating business needs into technical solutions
+Here's what I bring to the table:
+- Deep expertise in Java (Spring ecosystem), Go (high-performance services), and Rust (systems programming)
+- Extensive experience with AWS cloud services, containerization, and infrastructure automation
+- Track record of reducing operational costs while improving system performance and reliability
+- Strong focus on observability, security, and production excellence
 
-I’m looking for a team that values bold ideas, technical excellence, and a sense of purpose. If you’re tackling big challenges and want an engineer who’s as invested in people as in platforms, let’s talk.
+I'm seeking a role where I can leverage my expertise in backend development and distributed systems to solve challenging technical problems at scale. I'm particularly drawn to organizations that value technical depth, continuous improvement, and measurable impact.
 
-Thank you for your time and consideration.
+Thank you for considering my application.
 
-Best,
+Best regards,
 
 Darien Session

@@ -1,68 +1,227 @@
-### "Tell us about your experience using CASMO and SIMULATE. What specific analyses have you performed with these tools?"
+# DLMM Oracle TWAP Project - Interview Preparation Guide
 
-Over the past five years at GE Hitachi Nuclear Energy, I’ve worked with the CASMO5/SIMULATE5 suite for core physics analysis and digital system integration. My primary focus was on PWR core design and monitoring. I implemented a project to modernize a 1000 MWe PWR plant’s core monitoring system, where I developed and validated cross-section libraries using CASMO5 and used SIMULATE5 for nodal power distribution and core follow analyses.
+## Project Overview
+**Project**: Dynamic Liquidity Market Maker (DLMM) with Oracle Integration and TWAP Implementation  
+**Client**: Toshiko (SoraTech)  
+**Technology Stack**: Solana, Rust, Anchor 0.29.x, Pyth Network, SPL Token  
 
-One highlight was coupling SIMULATE5 predictions with the digital protection system to implement dynamic protection setpoints. This enhanced operational flexibility by 25% and improved safety margins. I also designed control rod optimization algorithms using SIMULATE5 data, which led to a 15% reduction in power distribution anomalies.
+## Key Project Requirements Understanding
 
-In addition, I developed automated workflows in Python to validate SIMULATE5 predictions against plant data, which helped improve core monitoring accuracy and saved significant analysis time.
+### 1. DLMM Core Features
+- **Bin Strategy**: System defaults to 70 bins per pool, expandable to 1400 bins
+- **Dynamic Liquidity**: Automated liquidity allocation based on market conditions
+- **Configurable Management**: Future-proof design with bin versioning support
 
+### 2. Fee Structure Implementation
+- **Max Fee Cap**: 10% (max_fee_bps = 1000)
+- **Protocol Fee Share**: 5% of final dynamic fee (protocol_fee_share_bps = 500)
+- **Dynamic Fee Calculation**: Based on volatility with configurable caps
+- **Platform Fee Markup**: 40% markup on on-chain rent and transaction costs
 
+### 3. Oracle Integration (Pyth Network)
+- **Price Fetching**: Encapsulated in PriceFetcher helper abstraction
+- **Timestamp Validation**: Delta between spot and TWAP ≤2 seconds
+- **Confidence Threshold**: Reject if confidence/price > 1.5%
+- **Staleness Check**: Reject if publish_time > 5 seconds
+- **Status Validation**: Accept only if status == Trading
 
-### “Can you walk us through a core design project you led using SIMULATE?”
+### 4. TWAP Implementation
+- **Observation Buffer**: Ring buffer or sliding window approach
+- **Deterministic Calculation**: Fixed interval queries (e.g., 30 seconds)
+- **Observation Recording**: Timestamp + tick + liquidity on every swap
+- **Time-Weighted Averaging**: Across observation buffer
 
-"Certainly. One of the key projects I led at GE Hitachi Nuclear Energy was the PWR core monitoring system upgrade for a 1000 MWe unit. The goal was to transition from an aging analog system to a modern digital platform that could leverage SIMULATE5 for real-time analysis and decision support.
+### 5. Event System & Output
+- **PoolCreated Event**: Include vaults, mints, fees, and key fields
+- **Structured Output**: Clear return values for off-chain syncing
+- **Indexer Support**: Events for frontend display and analytics
 
-I started by working with CASMO5 to generate multigroup cross-section libraries for the plant’s reload core. Then, using SIMULATE5, I performed core follow calculations, power distribution mapping, and thermal margin assessments. A critical part of the project involved integrating SIMULATE5 outputs with the plant's digital I&C system, allowing dynamic core behavior predictions to drive control and protection setpoints in real time.
+### 6. Validation & Testing
+- **Separate Validation**: validate_create_pool instruction for better UX
+- **Test Plan**: Unit tests, integration tests, failure condition coverage
+- **Time Estimates**: Implementation + testing hours breakdown
 
-One major challenge we faced was recurring power distribution anomalies during control rod maneuvering. I used SIMULATE5 to optimize rod patterns based on nodal predictions, which reduced those anomalies by 15%. We also built a Python-based tool to automate validation against plant measurements, improving monitoring accuracy by 40%.
+## Technical Deep-Dive Points
 
-The project improved system reliability by 35%, and the plant saved around $2M annually in maintenance by eliminating legacy hardware."
+### Solana Program Architecture
+```rust
+// Key structures you should be able to discuss:
+#[account]
+pub struct Pool {
+    pub vaults: Vec<Pubkey>,
+    pub mints: Vec<Pubkey>,
+    pub fees: PoolFees,
+    pub bin_strategy: BinStrategy,
+    pub oracle: Pubkey,
+    pub twap_data: TwapData,
+}
 
+#[derive(AnchorSerialize, AnchorDeserialize)]
+pub struct PoolFees {
+    pub max_fee_bps: u16,           // 10% cap
+    pub protocol_fee_share_bps: u16, // 5% of dynamic fee
+    pub dynamic_fee: u16,            // Volatility-based
+}
+```
 
-### “How do you validate the accuracy of your SIMULATE5 results?”
+### Pyth Network Integration
+```rust
+// Oracle price fetching with validation
+pub fn get_validated_price(
+    pyth_account: &Account<PythPrice>,
+    current_timestamp: i64,
+) -> Result<f64, Error> {
+    // Check staleness (≤5 seconds)
+    if current_timestamp - pyth_account.publish_time > 5 {
+        return Err(Error::PriceTooStale);
+    }
+    
+    // Check confidence threshold (≤1.5%)
+    let confidence_ratio = pyth_account.confidence / pyth_account.price;
+    if confidence_ratio > 0.015 {
+        return Err(Error::PriceConfidenceTooLow);
+    }
+    
+    // Check status
+    if pyth_account.status != TradingStatus::Trading {
+        return Err(Error::PriceNotTrading);
+    }
+    
+    Ok(pyth_account.price)
+}
+```
 
-"Validation is a critical part of using SIMULATE5 effectively, especially when it's integrated into digital I&C systems. My approach involves cross-verification with plant operational data and benchmarking against measured parameters.
+### TWAP Calculation Engine
+```rust
+#[derive(AnchorSerialize, AnchorDeserialize)]
+pub struct Observation {
+    pub timestamp: i64,
+    pub tick: i64,
+    pub liquidity: u128,
+}
 
-For example, in the core monitoring modernization project I led, I implemented an automated cross-validation framework between SIMULATE5 predictions and live plant measurements—such as axial power profiles, detector readings, and outlet temperatures—using Python and OSIsoft PI data. We flagged deviations exceeding a defined threshold and traced them to model assumptions or cross-section inaccuracies.
+pub struct TwapCalculator {
+    pub observations: VecDeque<Observation>, // Ring buffer
+    pub interval: u64,                       // 30 seconds
+}
 
-Additionally, I used CASMO5-generated nodal libraries with controlled variations to perform sensitivity studies, which helped refine the input parameters for SIMULATE5. This not only improved the fidelity of the model but also allowed early detection of anomalies in real-world conditions.
+impl TwapCalculator {
+    pub fn get_twap(&self, current_time: i64) -> Result<f64, Error> {
+        let target_time = current_time - self.interval;
+        
+        // Find observations around target time
+        let (obs1, obs2) = self.find_observations(target_time)?;
+        
+        // Calculate time-weighted average
+        let time_weight = (obs2.timestamp - obs1.timestamp) as f64;
+        let price1 = self.tick_to_price(obs1.tick);
+        let price2 = self.tick_to_price(obs2.tick);
+        
+        Ok((price1 + price2) / 2.0)
+    }
+}
+```
 
-By validating SIMULATE5 against actual operating data over several cycles, we achieved a 40% improvement in prediction accuracy, which was essential for dynamic protection system integration."
+## Interview Talking Points
 
+### 1. Project Approach
+**"I would approach this DLMM project in three phases:**
+1. **Phase 1**: Core DLMM infrastructure with basic bin management
+2. **Phase 2**: Oracle integration and TWAP implementation
+3. **Phase 3**: Advanced features like dynamic fees and event systems"
 
-### “Have you ever integrated SIMULATE5 with digital I&C systems or protection logic?”
+### 2. Technical Challenges & Solutions
+**"The main technical challenges I foresee are:**
+- **Oracle Latency**: Implementing timestamp validation to ensure price consistency
+- **TWAP Accuracy**: Building a robust observation buffer for reliable calculations
+- **Fee Optimization**: Balancing dynamic fee structures with gas efficiency
+- **Bin Scalability**: Designing a system that can expand from 70 to 1400 bins"
 
-"Yes, I’ve had direct experience integrating SIMULATE5 with digital instrumentation and control systems, particularly during a core monitoring and protection system modernization project at a 1000 MWe PWR plant.
+### 3. Security Considerations
+**"Security is paramount for DeFi protocols. I would implement:**
+- **Input Validation**: Comprehensive checks for all user inputs
+- **Oracle Security**: Multiple validation layers for price data
+- **Access Control**: Role-based permissions for admin functions
+- **Audit Trail**: Complete event logging for transparency"
 
-The core of the project was to develop a dynamic interface between SIMULATE5 core predictions and the digital reactor protection system. I implemented a framework where SIMULATE5 would provide real-time predictions of nodal powers, axial offset, and critical safety parameters, which were then used to dynamically adjust protection setpoints based on actual core conditions.
+### 4. Testing Strategy
+**"My testing approach includes:**
+- **Unit Tests**: Individual function testing with mocked dependencies
+- **Integration Tests**: End-to-end workflow testing
+- **Fuzzing**: Property-based testing for edge cases
+- **Gas Optimization**: Performance testing under various conditions"
 
-This coupling allowed for more flexible operation, because the protection system could adapt to changing power distribution, instead of relying on fixed conservative limits. As a result, the plant saw an 8% improvement in operational efficiency while maintaining and even enhancing safety margins.
+### 5. Performance Optimization
+**"For optimal performance, I would focus on:**
+- **Efficient Data Structures**: Optimized storage layouts for Solana
+- **Batch Operations**: Minimizing transaction costs
+- **Caching Strategies**: Smart caching for frequently accessed data
+- **Gas Optimization**: Careful instruction design to minimize costs"
 
-From a systems integration perspective, I worked with ControlLogix PLCs and Ovation DCS, ensuring that signal communication from SIMULATE5 was validated, redundant, and cybersecurity-compliant according to NEI 08-09.
+## Questions to Ask the Client
 
-This real-time coupling was a first-of-its-kind implementation at our site and required extensive testing, simulation, and licensing support to demonstrate to regulators that the dynamic setpoints maintained compliance with safety analysis limits."
+### 1. Technical Requirements
+- "What's the expected transaction volume for this protocol?"
+- "Are there specific performance requirements for TWAP calculations?"
+- "What's the target gas cost per operation?"
 
+### 2. Integration Requirements
+- "Which specific Pyth Network price feeds should we support?"
+- "Are there existing frontend applications we need to integrate with?"
+- "What's the expected timeline for mainnet deployment?"
 
-### “How do you handle CASMO5 library generation for reload analysis?”
+### 3. Business Logic
+- "How should the dynamic fee calculation respond to market volatility?"
+- "What's the target user experience for liquidity providers?"
+- "Are there specific regulatory compliance requirements?"
 
-"In my recent role at GE Hitachi Nuclear Energy, I was responsible for generating CASMO5 multigroup cross-section libraries for reload core design and real-time monitoring with SIMULATE5.
+### 4. Maintenance & Support
+- "What's the expected maintenance schedule post-deployment?"
+- "Are there plans for future feature additions?"
+- "What's the support structure for users?"
 
-The process started with defining the fuel assembly types, enrichment levels, burnable absorber configurations, and expected operational conditions such as temperature, boron concentration, and moderator density. I used CASMO5 to generate state-point libraries that captured a range of burnup and exposure conditions relevant to the operating cycle.
+## Your Experience Highlights
 
-To ensure accuracy, I applied spectrum-weighted cross-section collapsing and generated the nodal data required by SIMULATE5, including diffusion coefficients, discontinuity factors, and assembly discontinuity factors (ADFs). I also used Python scripting to automate batch CASMO runs and post-process the outputs into SIMULATE-ready formats.
+### 1. DLMM Implementation
+**"In my current role, I've developed a DLMM protocol that handles:**
+- Configurable bin strategies from 70 to 1400 bins
+- Dynamic fee structures based on market volatility
+- Automated liquidity allocation algorithms
+- Cross-chain bridge integration"
 
-Before deployment, I conducted cross-validation using legacy libraries and performed sensitivity studies to examine the effects of minor perturbations in fuel composition and coolant parameters. This helped ensure consistency and stability in downstream SIMULATE5 power distribution predictions.
+### 2. Oracle Integration
+**"I have extensive experience with:**
+- Pyth Network integration and validation
+- Real-time price feed processing
+- Confidence threshold enforcement
+- Timestamp validation systems"
 
-As part of our QA process, we documented the entire workflow in accordance with 10 CFR 50 Appendix B and NQA-1, and I collaborated closely with reactor physics, operations, and licensing teams to ensure the libraries were benchmarked against historical cycle data."
+### 3. TWAP Development
+**"I've built TWAP engines that:**
+- Process high-frequency price data
+- Maintain observation buffers efficiently
+- Calculate time-weighted averages accurately
+- Handle edge cases and market anomalies"
 
-### “Tell me about a time you used SIMULATE5 for anomaly detection or transient prediction.”
+### 4. Testing & Security
+**"My security approach includes:**
+- Comprehensive smart contract auditing
+- Automated testing frameworks
+- Vulnerability assessment and remediation
+- Continuous security monitoring"
 
-"One of the most impactful applications I led involved using SIMULATE5 for real-time anomaly detection in the core monitoring system.
+## Closing Statement
 
-During a digital modernization effort at a 1000 MWe PWR, I developed an integrated system where SIMULATE5 was continuously updated with live plant data, allowing it to serve as a predictive model for expected core behavior. We used this to build a framework that compared predicted versus actual readings — including detector signals, outlet temperatures, and axial offsets.
+**"I'm excited about this DLMM project because it combines my expertise in:**
+- Solana development with Anchor framework
+- DeFi protocol architecture and security
+- Oracle integration and real-time data processing
+- High-performance smart contract development
 
-To enhance this, I created an automated anomaly detection algorithm in Python that flagged deviations beyond predefined thresholds. These deviations were then ranked by severity and linked to potential root causes, such as failed sensors, control rod misalignments, or unexpected boron concentration shifts.
+**I'm confident I can deliver a robust, secure, and scalable solution that meets all your requirements while maintaining the highest standards of code quality and security."**
 
-We identified and diagnosed a recurring minor anomaly in power peaking near the periphery, which had gone undetected using the legacy analog system. Once resolved, we saw a 15% reduction in power distribution anomalies, and the system was robust enough to flag potential issues before they affected reactor operation.
-
-Later, we extended the framework using machine learning models trained on historical SIMULATE5 output to predict core behavior during transients, reducing engineering analysis turnaround by 70% during fast power maneuvers or equipment trips."
+## Follow-up Actions
+- Send technical architecture proposal within 24 hours
+- Provide detailed timeline and milestone breakdown
+- Share relevant code samples from previous projects
+- Schedule technical deep-dive session if needed

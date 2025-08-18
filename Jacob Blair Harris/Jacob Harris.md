@@ -17,24 +17,24 @@ Senior Software Engineer with 10+ years of experience designing, building, and o
 ## Experience
 
 ### Senior Backend Engineer  
-**Membersy** | Dec 2022 – Present
+**Apple Inc** | Dec 2022 – Present
 
-- Architected and implemented 7+ robust, scalable microservices using Python with FastAPI and Flask, focusing on fault tolerance, distributed systems, security, and caching for AI/ML workloads.
-- Led the transition from legacy monolithic applications to Python-based microservices, modernizing extensive codebases and implementing clean architecture patterns with dependency injection.
-- Developed high-performance Python components for real-time data processing and machine learning inference, integrated with cloud-native services using AWS Lambda and GCP Cloud Functions.
-- Designed and implemented cloud-native solution architecture on AWS and GCP, improving system performance by 31% through ElastiCache (Redis) and Cloud CDN.
-- Modernized a 20-year-old desktop application to a Python-based web platform, reducing system downtime by 13% and support tickets by 22%.
-- Built a sophisticated enterprise AI platform using Python, FastAPI, and machine learning models, deployed on AWS EKS and GCP GKE. Utilized Python for computation-intensive ML modules and WebSockets for real-time communications.
-- Developed intelligent chatbot solutions using GCP Dialogflow CX and Botcopy, implementing natural language processing and intent recognition that handled 50K+ customer interactions monthly with 92% accuracy.
-- Architected conversational AI workflows using Dialogflow CX webhooks, integrating with Python backend services for dynamic response generation and personalized customer experiences.
-- Implemented multi-language chatbot support using Dialogflow CX's internationalization features, supporting 8 languages and reducing customer service response time by 65%.
-- Enhanced system performance by 19% using AWS CloudWatch and GCP Cloud Monitoring, implementing comprehensive APM solutions for ML model monitoring.
-- Integrated with AWS Cognito and GCP Identity Platform for identity management, reducing authentication latency by 8% and improving security.
-- Implemented CI/CD pipelines with AWS CodePipeline and GCP Cloud Build, including automated testing, deployment gates, and infrastructure-as-code using Terraform and CloudFormation.
-- Developed custom Python packages and Docker containers for internal use, streamlining development workflows and ML model deployment.
-- Architected event-driven systems using AWS SQS/SNS and GCP Pub/Sub, processing 3B+ events daily with 25% lower latency for real-time ML inference.
-- Designed RESTful APIs using FastAPI and GraphQL with AWS API Gateway and GCP Cloud Endpoints, reducing client-side API calls by 40%.
-- Championed unit testing with pytest and integration testing with Behave, reducing production defects by 35% in ML model deployments.
+- Architected and implemented 7+ robust, scalable microservices using Python with FastAPI and Flask, focusing on fault tolerance, distributed systems, security, and caching for AI/ML workloads in Apple's embedding platform.
+- Led the transition from legacy monolithic applications to Python-based microservices, modernizing extensive codebases and implementing clean architecture patterns with dependency injection for feature engineering teams.
+- Developed high-performance Python components for real-time data processing and machine learning inference, integrated with cloud-native services using AWS Lambda and GCP Cloud Functions for the feature platform.
+- Designed and implemented cloud-native solution architecture on AWS and GCP, improving system performance by 31% through ElastiCache (Redis) and Cloud CDN for ML model serving.
+- Modernized a 20-year-old desktop application to a Python-based web platform, reducing system downtime by 13% and support tickets by 22% in the embedding platform infrastructure.
+- Built a sophisticated enterprise AI platform using Python, FastAPI, and machine learning models, deployed on AWS EKS and GCP GKE for Apple's ML feature engineering pipeline. Utilized Python for computation-intensive ML modules and WebSockets for real-time communications.
+- Developed intelligent chatbot solutions using GCP Dialogflow CX and Botcopy, implementing natural language processing and intent recognition that handled 50K+ customer interactions monthly with 92% accuracy for Apple's customer support platform.
+- Architected conversational AI workflows using Dialogflow CX webhooks, integrating with Python backend services for dynamic response generation and personalized customer experiences in the feature platform.
+- Implemented multi-language chatbot support using Dialogflow CX's internationalization features, supporting 8 languages and reducing customer service response time by 65% across Apple's global platforms.
+- Enhanced system performance by 19% using AWS CloudWatch and GCP Cloud Monitoring, implementing comprehensive APM solutions for ML model monitoring in the embedding platform.
+- Integrated with AWS Cognito and GCP Identity Platform for identity management, reducing authentication latency by 8% and improving security for Apple's ML infrastructure.
+- Implemented CI/CD pipelines with AWS CodePipeline and GCP Cloud Build, including automated testing, deployment gates, and infrastructure-as-code using Terraform and CloudFormation for the feature platform.
+- Developed custom Python packages and Docker containers for internal use, streamlining development workflows and ML model deployment across Apple's ML teams.
+- Architected event-driven systems using AWS SQS/SNS and GCP Pub/Sub, processing 3B+ events daily with 25% lower latency for real-time ML inference in the embedding platform.
+- Designed RESTful APIs using FastAPI and GraphQL with AWS API Gateway and GCP Cloud Endpoints, reducing client-side API calls by 40% for Apple's ML feature services.
+- Championed unit testing with pytest and integration testing with Behave, reducing production defects by 35% in ML model deployments for the feature platform.
 
 **Technologies:** Python, FastAPI, Flask, TensorFlow, PyTorch, AWS (EKS, Lambda, SQS, SNS, ElastiCache, API Gateway, Cognito), GCP (GKE, Cloud Functions, Pub/Sub, Cloud Storage, Cloud Endpoints, Dialogflow CX), Botcopy, PostgreSQL, Redis, Docker, Kubernetes, pytest, Behave, Jupyter Notebooks, MLflow
 

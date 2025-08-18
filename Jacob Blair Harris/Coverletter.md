@@ -8,7 +8,7 @@ Dear Hiring Manager,
 
 I am writing to express my strong interest in the Senior Software Engineer position. With over 10 years of experience building enterprise-grade AI/ML applications and cloud-native platforms, I am excited about the opportunity to contribute to your team's innovative projects.
 
-**AI/ML Expertise**: I have extensive experience developing and deploying machine learning models using TensorFlow, PyTorch, and Scikit-learn. At Membersy, I architected an enterprise AI platform that processes 3B+ events daily with 25% lower latency, demonstrating my ability to build scalable ML infrastructure.
+**AI/ML Expertise**: I have extensive experience developing and deploying machine learning models using TensorFlow, PyTorch, and Scikit-learn. At Apple, I architected an enterprise AI platform that processes 3B+ events daily with 25% lower latency, demonstrating my ability to build scalable ML infrastructure for embedding platforms and feature engineering pipelines.
 
 **Python Development**: I'm proficient in modern Python frameworks including FastAPI, Flask, and Django. I've led the migration of legacy systems to Python-based microservices, implementing clean architecture patterns and dependency injection for improved maintainability.
 

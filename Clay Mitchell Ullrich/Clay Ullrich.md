@@ -6,7 +6,7 @@
 
 ```
 clay.ullrich.work@gmail.com
-+1 806 216 8004
++1 351 355 0802
 ```
 
 </div>
